@@ -69,7 +69,7 @@ class Dijkstras
   attr_reader :routes, :starts, :ends
 
   def start_unvisited
-    Set.new(routes.keys - [starts])
+    Set.new(all_nodes - [starts])
   end
   private
 
@@ -90,52 +90,20 @@ class Dijkstras
   end
 end
 
+##########################
 
+RSpec.describe Dijkstras do
+  let(:routes) { {"A"=>{"B"=>5, "D"=>5, "E"=>7}, "B"=>{"C"=>4}, "C"=>{"D"=>8, "E"=>2}, "D"=>{"C"=>8, "E"=>6}, "E"=>{"B"=>3}} }
 
-
-
-
-
-
-
-
-
-
-
-
-
-class Wrapper
-  attr_reader :routes
-
-  def initialize
-    @routes = {"A"=>{"B"=>5, "D"=>5, "E"=>7}, "B"=>{"C"=>4}, "C"=>{"D"=>8, "E"=>2}, "D"=>{"C"=>8, "E"=>6}, "E"=>{"B"=>3}}
-  end
-
-  def distance(stations)
-    consecutive_stations = stations.each_cons(2)
-
-    if !consecutive_stations.all? { |x| routes[x[0]].has_key?(x[1]) }
-      'NO SUCH ROUTE'
-    else
-      consecutive_stations.reduce(0) { |sum, x| sum + routes[x[0]][x[1]] }
+  describe 'The length of the shortest route (in terms of distance to travel) from A to C.' do
+    it "finds the shortest path" do
+      expect(Dijkstras.call(routes, starts: 'A', ends: 'C')).to eq %w(A B C)
     end
   end
 
-  def shortest_distance(starts:, ends:)
-    path = Dijkstras.call(routes, starts: starts, ends: ends)
-
-    distance(path)
-  end
-end
-
-##########################
-
-RSpec.describe Wrapper do
-  describe 'The length of the shortest route (in terms of distance to travel) from A to C.' do
-    it { expect(subject.shortest_distance(starts: 'A', ends: 'C')).to eq 9 }
-  end
-
   describe 'The length of the shortest route (in terms of distance to travel) from B to B.' do
-    it { expect(subject.shortest_distance(starts: 'B', ends: 'B')).to eq 9 }
+    it "finds the shortest path" do
+      expect(Dijkstras.call(routes, starts: 'B', ends: 'B')).to eq %w(B C E B)
+    end
   end
 end
