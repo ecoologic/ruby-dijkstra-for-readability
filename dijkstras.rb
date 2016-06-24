@@ -6,23 +6,31 @@ class Dijkstras
     @routes = routes
   end
 
-  def call(starts:, ends:, unvisited:, distances:, path:)
-    unvisited_neighbours = routes[starts].select { |n, _| unvisited.include? n }
+  def self.call(routes, starts:, ends:, unvisited:, distances:, path:)
+    new(routes).call(current:   starts,
+                     ends:      ends,
+                     unvisited: unvisited,
+                     distances: distances,
+                     path:      path)
+  end
+
+  def call(current:, ends:, unvisited:, distances:, path:)
+    unvisited_neighbours = routes[current].select { |n, _| unvisited.include? n }
 
     unvisited_neighbours.each do |node, distance|
-      tentative_distance = distances[starts] + distance
+      tentative_distance = distances[current] + distance
       distances[node] = tentative_distance if tentative_distance < distances[node]
     end
 
-    unvisited = unvisited - [starts]
-    return path if path.size > 1 && !(unvisited - [starts]).include?(ends)
-    unvisited += [starts]
+    unvisited = unvisited - [current]
+    return path if path.size > 1 && !(unvisited - [current]).include?(ends)
+    unvisited += [current]
 
     min_node = distances.select do |n|
       unvisited_neighbours.include?(n)
     end.min_by(&:last).first # ["B", 5].last
 
-    call starts:    min_node,
+    call current:   min_node,
          ends:      ends,
          unvisited: unvisited,
          distances: distances,
@@ -55,7 +63,7 @@ class Wrapper
 
     unvisited = Set.new(routes.keys - [starts])
 
-    path = Dijkstras.new(routes).(starts:    starts,
+    path = Dijkstras.call(routes, starts:    starts,
                      ends:      ends,
                      unvisited: unvisited,
                      distances: distances,
