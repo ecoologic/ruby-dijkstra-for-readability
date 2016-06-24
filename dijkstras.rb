@@ -18,10 +18,6 @@ class Dijkstras
       return path if path.size > 1 && !unvisited.include?(ends)
       @unvisited += [current]
 
-      min_node = distances.select do |n|
-        unvisited_neighbours.include?(n)
-      end.min_by(&:last).first # ["B", 5].last
-
       self.class.new(routes,
                      min_node,
                      ends,
@@ -36,6 +32,12 @@ class Dijkstras
 
     def unvisited_neighbours
       routes[current].select { |n, _| unvisited.include? n }
+    end
+
+    def min_node
+      distances.select do |n|
+        unvisited_neighbours.include?(n)
+      end.min_by(&:last).first # ["B", 5].last
     end
   end
 
