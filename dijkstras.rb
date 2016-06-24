@@ -14,16 +14,13 @@ class Dijkstras
         distances[node] = tentative_distance if tentative_distance < distances[node]
       end
 
-      @unvisited -= [current]
-      if path.size > 1 && !unvisited.include?(ends)
+      if path.size > 1 && !unvisited_without_current.include?(ends)
         path
       else
-        @unvisited += [current]
-
         self.class.new(routes,
                        min_node,
                        ends,
-                       unvisited,
+                       unvisited_with_current_at_the_end,
                        distances,
                        path + [min_node]
         ).call
@@ -41,6 +38,14 @@ class Dijkstras
       distances.select do |n|
         unvisited_neighbours.include?(n)
       end.min_by(&:last).first # ["B", 5].last
+    end
+
+    def unvisited_without_current
+      unvisited - [current]
+    end
+
+    def unvisited_with_current_at_the_end
+      unvisited_without_current + [current]
     end
   end
 
