@@ -2,6 +2,41 @@ require 'pry'
 require 'set'
 
 class Dijkstras
+  class CurrentStep
+    def initialize(routes, current, ends, unvisited, distances, path)
+      @routes, @current, @ends, @unvisited, @distances, @path =
+        routes, current, ends, unvisited, distances, path
+    end
+
+    def call
+      unvisited_neighbours = routes[current].select { |n, _| unvisited.include? n }
+
+      unvisited_neighbours.each do |node, distance|
+        tentative_distance = distances[current] + distance
+        distances[node] = tentative_distance if tentative_distance < distances[node]
+      end
+
+      @unvisited -= [current]
+      return path if path.size > 1 && !unvisited.include?(ends)
+      @unvisited += [current]
+
+      min_node = distances.select do |n|
+        unvisited_neighbours.include?(n)
+      end.min_by(&:last).first # ["B", 5].last
+
+      self.class.new(routes,
+                     min_node,
+                     ends,
+                     unvisited,
+                     distances,
+                     path + [min_node]
+      ).call
+    end
+
+    private
+    attr_reader :routes, :current, :ends, :unvisited, :distances, :path
+  end
+
   def initialize(routes, starts, ends)
     @routes, @starts, @ends = routes, starts, ends
   end
@@ -11,25 +46,7 @@ class Dijkstras
   end
 
   def call(current: starts, unvisited: start_unvisited, distances: start_distances, path: [starts])
-    unvisited_neighbours = routes[current].select { |n, _| unvisited.include? n }
-
-    unvisited_neighbours.each do |node, distance|
-      tentative_distance = distances[current] + distance
-      distances[node] = tentative_distance if tentative_distance < distances[node]
-    end
-
-    unvisited = unvisited - [current]
-    return path if path.size > 1 && !(unvisited - [current]).include?(ends)
-    unvisited += [current]
-
-    min_node = distances.select do |n|
-      unvisited_neighbours.include?(n)
-    end.min_by(&:last).first # ["B", 5].last
-
-    call current:   min_node,
-         unvisited: unvisited,
-         distances: distances,
-         path:      path + [min_node]
+    CurrentStep.new(routes, current, ends, unvisited, distances, path).call
   end
 
   private
@@ -56,6 +73,20 @@ class Dijkstras
     end.uniq
   end
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class Wrapper
   attr_reader :routes
