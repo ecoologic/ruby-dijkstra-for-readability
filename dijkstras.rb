@@ -57,7 +57,7 @@ class Dijkstras
     @routes, @starts, @ends = routes, starts, ends
   end
 
-  def self.call(routes, starts:, ends:)
+  def self.shortest_path(routes, starts:, ends:)
     new(routes, starts, ends).call
   end
 
@@ -95,15 +95,17 @@ end
 RSpec.describe Dijkstras do
   let(:routes) { {"A"=>{"B"=>5, "D"=>5, "E"=>7}, "B"=>{"C"=>4}, "C"=>{"D"=>8, "E"=>2}, "D"=>{"C"=>8, "E"=>6}, "E"=>{"B"=>3}} }
 
-  describe 'The length of the shortest route (in terms of distance to travel) from A to C.' do
-    it "finds the shortest path" do
-      expect(Dijkstras.call(routes, starts: 'A', ends: 'C')).to eq %w(A B C)
+  describe '#shortest_path' do
+    context 'The length of the shortest route (in terms of distance to travel) from A to C.' do
+      it "finds the shortest path" do
+        expect(Dijkstras.shortest_path(routes, starts: 'A', ends: 'C')).to eq %w(A B C)
+      end
     end
-  end
 
-  describe 'The length of the shortest route (in terms of distance to travel) from B to B.' do
-    it "finds the shortest path" do
-      expect(Dijkstras.call(routes, starts: 'B', ends: 'B')).to eq %w(B C E B)
+    context 'The length of the shortest route (in terms of distance to travel) from B to B.' do
+      it "finds the shortest path" do
+        expect(Dijkstras.shortest_path(routes, starts: 'B', ends: 'B')).to eq %w(B C E B)
+      end
     end
   end
 end
