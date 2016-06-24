@@ -15,16 +15,19 @@ class Dijkstras
       end
 
       @unvisited -= [current]
-      return path if path.size > 1 && !unvisited.include?(ends)
-      @unvisited += [current]
+      if path.size > 1 && !unvisited.include?(ends)
+        path
+      else
+        @unvisited += [current]
 
-      self.class.new(routes,
-                     min_node,
-                     ends,
-                     unvisited,
-                     distances,
-                     path + [min_node]
-      ).call
+        self.class.new(routes,
+                       min_node,
+                       ends,
+                       unvisited,
+                       distances,
+                       path + [min_node]
+        ).call
+      end
     end
 
     private
