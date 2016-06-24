@@ -8,6 +8,7 @@ class Dijkstras
         routes, current, ends, unvisited, distances, path
     end
 
+    # Where the recursion happen
     def call
       update_distances_with_neighbours
 
@@ -27,6 +28,7 @@ class Dijkstras
     private
     attr_reader :routes, :current, :ends, :unvisited, :distances, :path
 
+    # This is a tricky step
     def update_distances_with_neighbours
       neighbours.each do |node, distance|
         tentative_distance = distances[current] + distance
@@ -57,6 +59,7 @@ class Dijkstras
     @routes, @starts, @ends = routes, starts, ends
   end
 
+  # The API call
   def self.shortest_path(routes, starts:, ends:)
     new(routes, starts, ends).call
   end
