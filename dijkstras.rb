@@ -9,8 +9,6 @@ class Dijkstras
     end
 
     def call
-      unvisited_neighbours = routes[current].select { |n, _| unvisited.include? n }
-
       unvisited_neighbours.each do |node, distance|
         tentative_distance = distances[current] + distance
         distances[node] = tentative_distance if tentative_distance < distances[node]
@@ -35,6 +33,10 @@ class Dijkstras
 
     private
     attr_reader :routes, :current, :ends, :unvisited, :distances, :path
+
+    def unvisited_neighbours
+      routes[current].select { |n, _| unvisited.include? n }
+    end
   end
 
   def initialize(routes, starts, ends)
