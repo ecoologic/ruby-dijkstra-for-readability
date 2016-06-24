@@ -6,11 +6,11 @@ class Dijkstras
     @routes, @starts, @ends = routes, starts, ends
   end
 
-  def self.call(routes, starts:, ends:, path:)
-    new(routes, starts, ends).call(path: path)
+  def self.call(routes, starts:, ends:)
+    new(routes, starts, ends).call
   end
 
-  def call(current: starts, unvisited: start_unvisited, distances: start_distances, path:)
+  def call(current: starts, unvisited: start_unvisited, distances: start_distances, path: [starts])
     unvisited_neighbours = routes[current].select { |n, _| unvisited.include? n }
 
     unvisited_neighbours.each do |node, distance|
@@ -75,8 +75,7 @@ class Wrapper
   end
 
   def shortest_distance(starts:, ends:)
-    path = Dijkstras.call(routes, starts: starts, ends: ends,
-                     path:      [starts])
+    path = Dijkstras.call(routes, starts: starts, ends: ends)
 
     distance(path)
   end
