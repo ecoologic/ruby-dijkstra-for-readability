@@ -6,14 +6,13 @@ class Dijkstras
     @routes, @starts, @ends = routes, starts, ends
   end
 
-  def self.call(routes, starts:, ends:, unvisited:, distances:, path:)
+  def self.call(routes, starts:, ends:, distances:, path:)
     new(routes, starts, ends).call(current:   starts,
-                     unvisited: unvisited,
                      distances: distances,
                      path:      path)
   end
 
-  def call(current: starts, unvisited:, distances:, path:)
+  def call(current: starts, unvisited: start_unvisited, distances:, path:)
     unvisited_neighbours = routes[current].select { |n, _| unvisited.include? n }
 
     unvisited_neighbours.each do |node, distance|
@@ -35,7 +34,12 @@ class Dijkstras
          path:      path + [min_node]
   end
 
+  private
   attr_reader :routes, :starts, :ends
+
+  def start_unvisited
+    Set.new(routes.keys - [starts])
+  end
 end
 
 class Wrapper
@@ -59,11 +63,8 @@ class Wrapper
     distances = infinite_distances
     distances[starts] = 0
 
-    unvisited = Set.new(routes.keys - [starts])
-
     path = Dijkstras.call(routes, starts:    starts,
                      ends:      ends,
-                     unvisited: unvisited,
                      distances: distances,
                      path:      [starts])
 
