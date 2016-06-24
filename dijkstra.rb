@@ -1,7 +1,7 @@
 require 'pry'
 require 'set'
 
-class Dijkstras
+class Dijkstra
   class CurrentStep
     def initialize(routes, current, ends, unvisited, distances, path)
       @routes, @current, @ends, @unvisited, @distances, @path =
@@ -95,19 +95,20 @@ end
 
 ##########################
 
-RSpec.describe Dijkstras do
+RSpec.describe Dijkstra do
+  # The Kiwiland Railway exercise routes
   let(:routes) { {"A"=>{"B"=>5, "D"=>5, "E"=>7}, "B"=>{"C"=>4}, "C"=>{"D"=>8, "E"=>2}, "D"=>{"C"=>8, "E"=>6}, "E"=>{"B"=>3}} }
 
   describe '#shortest_path' do
-    context 'The length of the shortest route (in terms of distance to travel) from A to C.' do
+    context 'The shortest route (in terms of distance to travel) from A to C.' do
       it "finds the shortest path" do
-        expect(Dijkstras.shortest_path(routes, starts: 'A', ends: 'C')).to eq %w(A B C)
+        expect(Dijkstra.shortest_path(routes, starts: 'A', ends: 'C')).to eq %w(A B C)
       end
     end
 
-    context 'The length of the shortest route (in terms of distance to travel) from B to B.' do
+    context 'The shortest route (in terms of distance to travel) from B to B.' do
       it "finds the shortest path" do
-        expect(Dijkstras.shortest_path(routes, starts: 'B', ends: 'B')).to eq %w(B C E B)
+        expect(Dijkstra.shortest_path(routes, starts: 'B', ends: 'B')).to eq %w(B C E B)
       end
     end
   end
