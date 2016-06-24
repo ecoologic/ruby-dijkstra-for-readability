@@ -2,19 +2,18 @@ require 'pry'
 require 'set'
 
 class Dijkstras
-  def initialize(routes)
-    @routes = routes
+  def initialize(routes, starts, ends)
+    @routes, @starts, @ends = routes, starts, ends
   end
 
   def self.call(routes, starts:, ends:, unvisited:, distances:, path:)
-    new(routes).call(current:   starts,
-                     ends:      ends,
+    new(routes, starts, ends).call(current:   starts,
                      unvisited: unvisited,
                      distances: distances,
                      path:      path)
   end
 
-  def call(current:, ends:, unvisited:, distances:, path:)
+  def call(current: starts, unvisited:, distances:, path:)
     unvisited_neighbours = routes[current].select { |n, _| unvisited.include? n }
 
     unvisited_neighbours.each do |node, distance|
@@ -31,13 +30,12 @@ class Dijkstras
     end.min_by(&:last).first # ["B", 5].last
 
     call current:   min_node,
-         ends:      ends,
          unvisited: unvisited,
          distances: distances,
          path:      path + [min_node]
   end
 
-  attr_reader :routes
+  attr_reader :routes, :starts, :ends
 end
 
 class Wrapper
