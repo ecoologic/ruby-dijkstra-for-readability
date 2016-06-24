@@ -15,11 +15,11 @@ class Dijkstras
         path
       else
         self.class.new(routes,
-                       min_node,
+                       closest_node,
                        ends,
                        unvisited_with_current_at_the_end,
                        distances,
-                       path + [min_node]
+                       path + [closest_node]
         ).call
       end
     end
@@ -38,10 +38,10 @@ class Dijkstras
       routes[current].select { |n, _| unvisited.include? n }
     end
 
-    def min_node
-      distances.select do |n|
-        neighbours.include?(n)
-      end.min_by(&:last).first # ["B", 5].last
+    def closest_node
+      distances.select { |n| neighbours.include?(n) }
+        .min_by(&:last) # eg: ["B", 5].last - ie: the distance
+        .first          # ie: the node
     end
 
     def unvisited_without_current
