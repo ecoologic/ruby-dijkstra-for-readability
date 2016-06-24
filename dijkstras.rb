@@ -6,13 +6,11 @@ class Dijkstras
     @routes, @starts, @ends = routes, starts, ends
   end
 
-  def self.call(routes, starts:, ends:, distances:, path:)
-    new(routes, starts, ends).call(current:   starts,
-                     distances: distances,
-                     path:      path)
+  def self.call(routes, starts:, ends:, path:)
+    new(routes, starts, ends).call(path: path)
   end
 
-  def call(current: starts, unvisited: start_unvisited, distances:, path:)
+  def call(current: starts, unvisited: start_unvisited, distances: start_distances, path:)
     unvisited_neighbours = routes[current].select { |n, _| unvisited.include? n }
 
     unvisited_neighbours.each do |node, distance|
@@ -40,6 +38,23 @@ class Dijkstras
   def start_unvisited
     Set.new(routes.keys - [starts])
   end
+  private
+
+  def start_distances
+    infinite_distances.merge starts => 0
+  end
+
+  def infinite_distances
+    all_nodes.reduce({}) do |result, node|
+      result.merge node => Float::INFINITY
+    end
+  end
+
+  def all_nodes
+    routes.each.reduce [] do |result, (node, weights)|
+      result + [node] + weights.keys
+    end.uniq
+  end
 end
 
 class Wrapper
@@ -60,29 +75,10 @@ class Wrapper
   end
 
   def shortest_distance(starts:, ends:)
-    distances = infinite_distances
-    distances[starts] = 0
-
-    path = Dijkstras.call(routes, starts:    starts,
-                     ends:      ends,
-                     distances: distances,
+    path = Dijkstras.call(routes, starts: starts, ends: ends,
                      path:      [starts])
 
     distance(path)
-  end
-
-  private
-
-  def all_nodes
-    routes.each.reduce [] do |result, (node, weights)|
-      result + [node] + weights.keys
-    end.uniq
-  end
-
-  def infinite_distances
-    all_nodes.reduce({}) do |result, node|
-      result.merge node => Float::INFINITY
-    end
   end
 end
 
