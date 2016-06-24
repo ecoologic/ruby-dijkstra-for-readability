@@ -9,10 +9,7 @@ class Dijkstras
     end
 
     def call
-      unvisited_neighbours.each do |node, distance|
-        tentative_distance = distances[current] + distance
-        distances[node] = tentative_distance if tentative_distance < distances[node]
-      end
+      update_distances_with_neighbours
 
       if path.size > 1 && !unvisited_without_current.include?(ends)
         path
@@ -30,13 +27,20 @@ class Dijkstras
     private
     attr_reader :routes, :current, :ends, :unvisited, :distances, :path
 
-    def unvisited_neighbours
+    def update_distances_with_neighbours
+      neighbours.each do |node, distance|
+        tentative_distance = distances[current] + distance
+        distances[node] = tentative_distance if tentative_distance < distances[node]
+      end
+    end
+
+    def neighbours
       routes[current].select { |n, _| unvisited.include? n }
     end
 
     def min_node
       distances.select do |n|
-        unvisited_neighbours.include?(n)
+        neighbours.include?(n)
       end.min_by(&:last).first # ["B", 5].last
     end
 
