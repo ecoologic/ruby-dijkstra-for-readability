@@ -28,7 +28,6 @@ class Dijkstra
     private
     attr_reader :routes, :current, :ends, :unvisited, :distances, :path
 
-    # This is a tricky step
     def update_distances_with_neighbours
       neighbours.each do |node, distance|
         tentative_distance = distances[current] + distance
@@ -37,11 +36,11 @@ class Dijkstra
     end
 
     def neighbours
-      routes[current].select { |n, _| unvisited.include? n }
+      routes[current].select { |node, _| unvisited.include?(node) }
     end
 
     def closest_node
-      distances.select { |n| neighbours.include?(n) }
+      distances.select { |node| neighbours.include?(node) }
         .min_by(&:last) # eg: ["B", 5].last - ie: the distance
         .first          # ie: the node
     end
@@ -79,6 +78,8 @@ class Dijkstra
   def start_distances
     infinite_distances.merge starts => 0
   end
+
+  # TODO: These methods would belong to a Graph object, which I didn't model
 
   def infinite_distances
     all_nodes.reduce({}) do |result, node|
