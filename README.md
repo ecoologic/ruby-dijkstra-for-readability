@@ -1,13 +1,13 @@
 # Dijkstra's shortest path algorithm
 
-A Ruby implementation to understand the Dijkstra algorithm.  The terminology is not super consistent.
+A Ruby implementation to understand the Dijkstra algorithm.
 
 Dijkstra is an algorithm for finding the shortest paths between nodes in a graph.
 
 * Written in Ruby
 * Written for Readability
 * Written in an Object Oriented style
-* Loosely Tested with RSpec
+* Loosely Tested with RSpec (more specs in another project)
 
 Tested using the Kiwiland Railway exercise (Kaitaia / Invercargill).  Can be used to solve:
 
